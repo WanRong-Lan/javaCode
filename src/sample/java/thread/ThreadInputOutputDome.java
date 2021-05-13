@@ -2,6 +2,8 @@ package sample.java.thread;
 // 线程数据通信
 
 /**
+ * 线程等待唤醒机制
+ * --------------------
  * wait、notify、notifyAll
  *  都使用在同步中的，因为对持有监视锁的线程操作，所以要在同步中。
  *  因为只有同步才具有锁。
@@ -13,6 +15,7 @@ package sample.java.thread;
  *  不可以对不同锁中的线程进行唤醒。
  *  简单来锁，等待和唤醒必须是同一个锁。
  *  而锁可以是任意对象，所以可以被任意对象调用的方法定义Object类
+ *  ------------------
  */
 class People{
     private String name;
@@ -50,6 +53,40 @@ class People{
     public void setFlag(Boolean flag) {
         this.flag = flag;
     }
+    public synchronized void setInfo(String name,String sex){
+        if(flag){
+            try {
+                this.wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        this.name= name;
+        this.sex = sex;
+        this.flag = true;
+        try {
+            this.notify();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    public synchronized void outPut(){
+        if(!flag){
+            try {
+                this.wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println(this.toString());
+        this.flag=false;
+        try {
+            this.notify();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 }
 class Input implements Runnable{
     private People people;
@@ -63,29 +100,12 @@ class Input implements Runnable{
         int i = 0;
         while (true){
             synchronized (this.people){
-                // 标记为true，进程等候
-                if(this.people.getFlag()) {
-                    try {
-                        this.people.wait();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
                 if(i%2!=0){
-                    this.people.setName("丽丽");
-                    this.people.setSex("女");
+                    this.people.setInfo("丽丽","女");
                 }else{
-                    this.people.setName("亮亮");
-                    this.people.setSex("男");
+                    this.people.setInfo("亮亮","男");
                 }
-                this.people.setFlag(true);
                 i++;
-                // 唤醒线程池下一个线程
-                try {
-                    this.people.notify();
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
             }
 
         }
@@ -102,21 +122,7 @@ class Output implements Runnable{
     public void run() {
         while (true){
             synchronized (this.people){
-                if(!this.people.getFlag()) {
-                    try {
-                        this.people.wait();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-                System.out.println(this.people.toString());
-                this.people.setFlag(false);
-                try {
-                    this.people.notify();
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-
+                this.people.outPut();
             }
         }
     }
