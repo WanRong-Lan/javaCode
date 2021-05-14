@@ -1,7 +1,7 @@
 package sample.java.thread;
 
 /**
- * 结合 ThreadInputOutPutDome.class 在有2个以上线程以上是容易出现Input和Output 两个重复执行，打断了交替执行。
+ * 结合 ThreadInputOutPutDome1.class 在有2个以上线程以上是容易出现Input和Output 两个重复执行，打断了交替执行。
  *
  * 生成者--消费者
  */
