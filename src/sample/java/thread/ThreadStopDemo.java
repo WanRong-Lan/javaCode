@@ -13,14 +13,19 @@ public class ThreadStopDemo {
         StopThread st = new StopThread();
         Thread t1 = new Thread(st);
         Thread t2 = new Thread(st);
+        // setDaemon 线程守护,将线程标记为线程守护，当正在运行的线程都是守护线程时，Java虚拟机退出。
+        // 该方法必须在启动线程前调用
+        // 该方法首先调用该线程的checkAccess 方法。且不带参数。
+        t1.setDaemon(true);
+        t2.setDaemon(true);
         t1.start();
         t2.start();
         int num = 0;
         while (true){
             if(num++==60){
                 // 让线程从冻结/沉睡中强制恢复运行。
-                t1.interrupt();
-                t2.interrupt();
+//                t1.interrupt();
+//                t2.interrupt();
                 break;
             }
             System.out.println(Thread.currentThread().getName()+".....main");
