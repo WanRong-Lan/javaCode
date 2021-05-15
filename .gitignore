@@ -1,4 +1,5 @@
-./.idea
+/.idea/
 ./out
 /out/
 /.idea/uiDesigner.xml
+.DS_Store
